@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paul Trassaert | Quantitative Researcher</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. VARIABLES & BASE --- */
+        :root {
+            --bg-deep: #020202;       
+            --accent: #f59e0b;        
+            --accent-glow: rgba(245, 158, 11, 0.4);
+            --text-main: #e5e5e5;
+            --text-dim: #888888;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(15, 15, 15, 0.8); 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- 2. BACKGROUND (GPU Optimized) --- */
+        .background-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
+        .grid-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 95%);
+            mask-image: radial-gradient(circle at center, black 20%, transparent 95%);
+        }
+
+        .glow-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.08), transparent 60%);
+        }
+
+        /* --- 3. UI COMPONENTS --- */
+        .tech-font { font-family: 'JetBrains Mono', monospace; }
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+        
+        .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem; margin-top: 6rem; }
+        .section-header h2 { font-size: 2rem; letter-spacing: -1px; }
+        /* Remplacement pour la ligne 64 */
+        .section-header .line {
+            flex: 1;
+            height: 1px;          /* Épaisseur augmentée (avant: 1px) */
+            background: white;    /* Couleur blanc pur (avant: translucide) */
+            border-radius: 2px;   /* Petit arrondi pour un rendu plus propre */
+            opacity: 0.9;         /* Légère transparence pour ne pas être trop agressif, mais très blanc */
+        }
+        .section-header span { color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 5%;
+            background: rgba(2, 2, 2, 0.95);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo { font-weight: 800; font-size: 1.3rem; letter-spacing: -1px; }
+        .logo span { color: var(--accent); } 
+        
+        .nav-center {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 2rem;
+        }
+        .nav-center a { color: var(--text-dim); font-size: 0.95rem; font-weight: 500; }
+        .nav-center a:hover { color: var(--accent); }
+
+        .nav-btn-right {
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.85rem; font-weight: 600;
+            background: rgba(255,255,255,0.05);
+        }
+        .nav-btn-right:hover {
+            border-color: var(--accent); color: var(--accent);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* --- LE NOUVEAU BOUTON FLUO --- */
+        .cta-button {
+            display: inline-block; 
+            padding: 1rem 3rem;
+            background: var(--accent); 
+            color: #000;
+            font-weight: 800; /* Texte bien gras */
+            border-radius: 50px; 
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            
+            /* Transition fluide et "élastique" */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+
+        .cta-button:hover {
+            /* 1. L'effet Pop-out (Grossit et monte) */
+            transform: translateY(-5px) scale(1.02);
+
+            /* 3. L'ombre "Néon" intense */
+            box-shadow: 
+                0 0 10px var(--accent),       /* Cœur lumineux */
+                0 0 25px var(--accent-glow);  /* Halo diffus */
+        }
+
+        /* --- HERO --- */
+        .hero { padding: 10rem 1rem 6rem; text-align: center; max-width: 900px; margin: 0 auto; }
+        .hero h1 { font-size: 4rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -2px; color: #fff; }
+        .highlight {
+            color: var(--accent);
+            background: linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--text-dim); font-size: 1.25rem; max-width: 600px; margin: 0 auto 3rem; }
+        .badge-pill {
+            display: inline-block; padding: 5px 15px; border: 1px solid var(--accent);
+            border-radius: 50px; color: var(--accent); font-size: 0.8rem;
+            margin-bottom: 1.5rem; background: rgba(245, 158, 11, 0.05);
+        }
+        .intro-text {
+        color: var(--accent);
+        font-size: 1.2rem;       /* Légèrement plus grand car les minuscules paraissent plus petites */
+        font-weight: 500;
+        margin-bottom: 1rem;
+        letter-spacing: 0;       /* On remet l'espacement normal pour la lisibilité */
+        /* text-transform: uppercase;  <-- On a supprimé cette ligne */
+        }   
+
+        /* --- ABOUT SECTION --- */
+        .about-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem; border-radius: 20px;
+            backdrop-filter: blur(5px);
+            display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;
+        }
+        .about-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .tag {
+            display: inline-block; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1px; font-weight: 700; color: var(--accent);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.3rem 0.8rem; border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* --- PROJECTS SECTION (RECTANGULAR) --- */
+        .project-list { display: flex; flex-direction: column; gap: 1.2rem; }
+        
+        .project-card {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.8rem 2.5rem;
+            border-radius: 12px;
+            transition: 0.3s ease;
+            cursor: pointer;
+        }
+        .project-card:hover {
+            border-color: var(--accent);
+            background: rgba(30, 30, 30, 0.8);
+            transform: translateX(10px);
+            box-shadow: -10px 0px 20px rgba(245, 158, 11, 0.05);
+        }
+        .project-info { max-width: 70%; }
+        .project-title {
+            font-size: 1.3rem; font-weight: 600; color: #fff;
+            margin-bottom: 0.5rem; display: flex; align-items: center; gap: 12px;
+        }
+        .arrow-icon { opacity: 0; transform: translateX(-10px); transition: 0.3s; color: var(--accent); font-size: 0.85rem; }
+        .project-card:hover .arrow-icon { opacity: 1; transform: translateX(0); }
+        .project-desc { font-size: 0.95rem; color: var(--text-dim); }
+        
+        .project-meta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .tag-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+        /* --- FOOTER / CONTACT --- */
+        footer {
+            margin-top: 8rem; padding: 5rem 5% 3rem; text-align: center;
+            border-top: 1px solid var(--glass-border);
+        }
+        .contact-grid { margin-top: 2rem; display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+        .contact-link { font-weight: 600; font-size: 1.1rem; }
+        .contact-link:hover { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .nav-center { display: none; }
+            .project-card { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+            .project-info { max-width: 100%; }
+            .project-meta { align-items: flex-start; text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-wrapper">
+        <div class="glow-layer"></div>
+        <div class="grid-layer"></div>
+    </div>
+
+    <nav>
+        <div class="logo tech-font">P<span style="color:var(--accent)">.</span>T</div>
+        <div class="nav-center">
+            <a href="#">Home</a>
+            <a href="#about">About Me</a>
+            <a href="#projects">Portfolio</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <a href="#contact" class="nav-btn-right">
+            Contact <i style="font-size:0.7rem; margin-left:5px;"></i>
+        </a>
+    </nav>
+
+    <section class="hero">
+        <p class="intro-text tech-font">Hi, I'm Paul Trassaert</p>
+        <h1>Mathematics & <br><span class="highlight">Computational Finance</span> Student</h1>
+        <p>Engineering student at IMT Atlantique. Specializing in Stochastic Modeling, Machine Learning, and High-Performance Computing.</p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="#projects" class="cta-button" style="padding: 1rem 2rem; background: var(--accent); color: #000; border: none;">View Work</a>
+            <a href="CV_PAUL_TRASSAERT_EN.pdf" download class="nav-btn-right" style="padding: 1rem 2rem;">Download My Resume</a>
+        </div>
+    </section>
+
+    <div class="container">
+        
+        <section id="about">
+            <div class="section-header">
+                <h2>About Me</h2>
+                <div class="line"></div>
+            </div>
+            
+            <div class="about-card">
+                <div style="flex: 1;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Engineering & Mathematics</h3>
+                    <p style="margin-bottom: 1rem; color: var(--text-dim);">
+                        Currently studying <strong>Mathematical and Computational Engineering</strong> at IMT Atlantique (Top French Engineering School). My curriculum focuses on stochastic modeling, numerical methods, and AI applied to finance.
+                    </p>
+                    <p style="margin-bottom: 0; color: var(--text-dim);">
+                        I have a strong background in mathematics and physics from my preparatory classes (CPGE) and practical experience in Big Data analysis and High-Performance Computing.
+                    </p>
+
+                    <div style="margin-top: 1.8rem;">
+                         <p class="tech-font" style="font-size: 0.85rem; color: #fff; margin-bottom: 0.8rem;">Technical Stack :</p>
+                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <span class="tag">Python</span>
+                            <span class="tag">Julia / HPC</span>
+                            <span class="tag">R Language</span>
+                            <span class="tag">C++</span>
+                            <span class="tag">SQL</span>
+                            <span class="tag">GCP / BigQuery</span>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="section-header">
+                <h2>Portfolio</h2>
+                <div class="line"></div>
+            </div>
+
+            <div class="project-list">
+                
+                <a href="https://github.com/paultrassaert/Julia-Hyperspectral-Unmixing" target="_blank" class="project-card">
+                    <div class="project-info">
+                        <div class="project-title">
+                            Hyperspectral Unmixing <i class="fas fa-arrow-right arrow-icon"></i>
+                        </div>
+                        <p class="project-desc">
+                            High-performance implementation of Hyperspectral Image Unmixing using Julia. Comparison of Sequential, Data Parallel, and Task Parallel strategies.
+                        </p>
+                    </div>
+                    <div class="project-meta">
+                        <div class="tag-container">
+                            <span class="tag">Julia</span>
+                            <span class="tag">HPC</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://github.com/paultrassaert/ocean-satellite-analysis-gcp" target="_blank" class="project-card">
+                    <div class="project-info">
+                        <div class="project-title">
+                            Global Ocean Analysis <i class="fas fa-arrow-right arrow-icon"></i>
+                        </div>
+                        <p class="project-desc">
+                            Processing ~50GB of satellite data (SST/SSH) using Google Cloud Platform (BigQuery) and Python to model climate trends and extremes.
+                        </p>
+                    </div>
+                    <div class="project-meta">
+                        <div class="tag-container">
+                            <span class="tag">Python</span>
+                            <span class="tag">GCP / SQL</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://github.com/paultrassaert/BDD-MOMA-Cliff-Collapse-Analysis" target="_blank" class="project-card">
+                    <div class="project-info">
+                        <div class="project-title">
+                            Stochastic Cliff Modelling <i class="fas fa-arrow-right arrow-icon"></i>
+                        </div>
+                        <p class="project-desc">
+                            Statistical Analysis and Modelling of Cliff Collapses. Designed stochastic models linking geological and meteorological variables.
+                        </p>
+                    </div>
+                    <div class="project-meta">
+                        <div class="tag-container">
+                            <span class="tag">R Language</span>
+                            <span class="tag">Stochastic</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://github.com/paultrassaert/modular-ml-pipeline" target="_blank" class="project-card">
+                    <div class="project-info">
+                        <div class="project-title">
+                            Modular ML Pipeline <i class="fas fa-arrow-right arrow-icon"></i>
+                        </div>
+                        <p class="project-desc">
+                            A modular pipeline for binary classification including data cleaning, feature selection, and unit testing applied to complex datasets.
+                        </p>
+                    </div>
+                    <div class="project-meta">
+                        <div class="tag-container">
+                            <span class="tag">Python</span>
+                            <span class="tag">Scikit-Learn</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <footer id="contact">
+            <div class="section-header" style="justify-content: center; margin-top: 0;">
+                <h2 class="tech-font">Contact Me</h2>
+            </div>
+            
+            <div class="contact-grid">
+                <a href="mailto:paultrst@icloud.com" class="contact-link" style="color: var(--accent);">
+                    <i class="fas fa-envelope"></i> paultrst@icloud.com
+                </a>
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <a href="https://github.com/paultrassaert" target="_blank" style="margin: 0 15px; font-size: 2.5rem;"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/paul-trassaert-67942826b/" target="_blank" style="margin: 0 15px; font-size: 2.5rem;"><i class="fab fa-linkedin"></i></a>
+            </div>
+
+            <div style="margin-top: 5rem; opacity: 0.3; font-size: 0.8rem;" class="tech-font">
+                &copy; 2025 PAUL TRASSAERT. DESIGNED FOR PERFORMANCE.
+            </div>
+        </footer>
+
+    </div>
+
+</body>
+</html>
